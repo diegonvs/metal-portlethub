@@ -1,0 +1,46 @@
+{
+  "name": "metal-portlethub",
+  "version": "1.0.0-alpha.0",
+  "description": "PortletHub implementation based on Pluto reference implementation.",
+  "license": "BSD",
+  "repository": "metal/metal-portlethub",
+  "engines": {
+    "node": ">=8.1.0",
+    "npm": ">=3.0.0"
+  },
+  "main": "src/api.js",
+  "esnext:main": "src/api.js",
+  "jsnext:main": "src/api.js",
+  "files": [
+    "lib",
+    "src",
+    "test"
+  ],
+  "scripts": {
+    "build": "webpack",
+    "format": "prettier-eslint --write src/**/*.js src/*/*.js",
+    "lint": "eslint src/**/*.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "jsr382",
+    "portlethub",
+    "metal"
+  ],
+  "dependencies": {
+    "metal": "^2.13.2",
+    "metal-state": "^2.13.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-node-env-inline": "^0.1.1",
+    "babel-preset-env": "^1.6.0",
+    "eslint": "^4.1.1",
+    "eslint-config-liferay": "^1.0.2",
+    "prettier-eslint-cli": "^4.3.2",
+    "webpack": "^3.0.0",
+    "jest": "^20.0.4"
+  }
+}

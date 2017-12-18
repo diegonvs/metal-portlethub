@@ -20,7 +20,8 @@
     "build": "webpack",
     "format": "prettier-eslint --write src/**/*.js src/*/*.js",
     "lint": "eslint src/**/*.js",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [
     "jsr382",

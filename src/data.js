@@ -117,8 +117,8 @@ export class RenderState {
 }
 
 export class RenderData {
-	constructor(renderData = '', mimeType = '') {
-		this.renderData = renderData;
+	constructor(content = '', mimeType = '') {
+		this.content = content;
 		this.mimeType = mimeType;
 	}
 }

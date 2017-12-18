@@ -8,6 +8,7 @@
  */
 
 import PortletImpl from '../impl';
+import {RenderState} from '../data';
 import MockData from '../__mocks__/MockData';
 import DummyActionPortlet from '../__mocks__/DummyActionPortlet';
 import {Portlet, PortletInit} from '../api';
@@ -85,7 +86,7 @@ describe('The portlet hub allows the portlet client to execute a portlet action'
       stateChangeHandle = hubA.addEventListener(
         'portlet.onStateChange',
         data => {
-          console.log(data);
+          // console.log(data);
         }
       );
     });
@@ -178,16 +179,21 @@ describe('The portlet hub allows the portlet client to execute a portlet action'
     });
 
     it('causes the onStateChange listener to be called and state is as expected', function() {
-      const mockedRetUpdateString = MockData.test.data.updateStrings[portletA];
+      const mockedUpdateString = MockData.test.data.updateStrings[portletA];
       const states = MockData.test.decodeUpdateString(
-        mockedRetUpdateString,
+        mockedUpdateString,
         portletA
       );
-      const expectedState = hubA.newState(states[portletA]);
 
-      hubA.addEventListener('portlet.onStateChange', renderState => {
-        expect(renderState).toEqual(expectedState);
-      });
+      const expectedState = hubA.newState(states[portletA]);
+      hubA.setRenderState(expectedState);
+
+      hubA.addEventListener(
+        'portlet.onStateChange',
+        (eventType, renderState) => {
+          expect(renderState).toEqual(expectedState);
+        }
+      );
       const parms = {rp1: ['resVal']};
       const el = document.createElement('form');
       hubA.action(el, parms);
@@ -233,42 +239,54 @@ describe('The portlet hub allows the portlet client to execute a portlet action'
     });
 
     it('allows actions that update the state of 2 portlets. Other portlets are not updated', function() {
-      let el = document.createElement('form');
-      let parms = {rp1: ['resVal']};
-      return hubB.action(el, parms).then(() => {
-        let str = MockData.test.data.updateStrings[portletB];
-        let states = MockData.test.decodeUpdateString(str, portletB);
-
-        let state = hubB.newState(states[portletB]);
-        expect(renderState).toEqual(state);
-
-        state = hubC.newState(states[portletC]);
-        expect(renderState).toEqual(state);
+      const shouldNotUpdateExpectedState = new RenderState({
+        shouldNotUpdate: 'fixedState',
       });
-    });
+      const shouldUpdateExpectedState = new RenderState({
+        shouldUpdate: 'newState',
+      });
+      const updaterExpectedRenderState = new RenderState({
+        updater: 'newState',
+      });
+      return Promise.all([
+        new Portlet(new DummyActionPortlet()).register('shouldUpdate'),
+        new Portlet(new DummyActionPortlet()).register('shouldNotUpdate'),
+      ]).then(hubs => {
+        const shouldUpdate = hubs[0];
+        const shouldNotUpdate = hubs[1];
 
-    it('allows actions that update the state of several portlets. The state of each is as expected.', function() {
-      let parms = {rp1: ['resVal']},
-        str,
-        states,
-        state;
-      let el = document.createElement('form');
+        shouldNotUpdate.setRenderState(shouldNotUpdateExpectedState);
 
-      return hubC.action(el, parms).then(() => {
-        str = MockData.test.data.updateStrings[portletC];
-        states = MockData.test.decodeUpdateString(str, portletC);
+        class PeerUpdaterActionPortlet extends PortletImpl {
+          executeAction() {
+            return new Promise((resolve, reject) => {
+              shouldUpdate.setRenderState(shouldUpdateExpectedState);
+              Portlet.getPortletHub('updater').setRenderState(
+                updaterExpectedRenderState
+              );
+              resolve(true);
+            });
+          }
+        }
 
-        state = hubA.newState(states[portletA]);
-        expect(cbA.retRenderState).toEqual(state);
-
-        state = hubB.newState(states[portletB]);
-        expect(cbB.retRenderState).toEqual(state);
-
-        state = hubC.newState(states[portletC]);
-        expect(cbC.retRenderState).toEqual(state);
-
-        state = hubD.newState(states[portletD]);
-        expect(cbD.retRenderState).toEqual(state);
+        return new Portlet(new PeerUpdaterActionPortlet())
+          .register('updater')
+          .then(hub => {
+            hub.addEventListener('portlet.onStateChange', data =>
+              console.log('updater changed')
+            );
+            let el = document.createElement('form');
+            let parms = {rp1: ['resVal']};
+            return hub.action(el, parms).then(() => {
+              expect(hub.getRenderState()).toEqual(updaterExpectedRenderState);
+              expect(shouldUpdate.getRenderState()).toEqual(
+                shouldUpdateExpectedState
+              );
+              expect(shouldNotUpdate.getRenderState()).toEqual(
+                shouldNotUpdateExpectedState
+              );
+            });
+          });
       });
     });
   });

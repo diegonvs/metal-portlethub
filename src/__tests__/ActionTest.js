@@ -1,3 +1,10 @@
+import PortletImpl from '../impl';
+import {RenderState} from '../data';
+import MockData from '../__mocks__/MockData';
+import DummyActionPortlet from '../__mocks__/DummyActionPortlet';
+import {Portlet, PortletInit} from '../api';
+import {AccessDeniedException, NotInitializedException} from '../exceptions';
+
 /**
  * This is Jasmine test code for the Portlet Hub.
  * <p>
@@ -6,13 +13,6 @@
  * by the end of module execution, any listeners that are added in the
  * earlier portions of the test are removed.
  */
-
-import PortletImpl from '../impl';
-import {RenderState} from '../data';
-import MockData from '../__mocks__/MockData';
-import DummyActionPortlet from '../__mocks__/DummyActionPortlet';
-import {Portlet, PortletInit} from '../api';
-import {AccessDeniedException, NotInitializedException} from '../exceptions';
 
 describe('The portlet hub allows the portlet client to execute a portlet action', function() {
   'use strict';
@@ -33,9 +33,7 @@ describe('The portlet hub allows the portlet client to execute a portlet action'
     portletB = portletIds[1],
     portletC = portletIds[2],
     portletD = portletIds[3],
-    // Test data provided by the portlet hub
-    pageState = MockData.test.getInitData(),
-    // Tests in thismodule need following portlets. register them.
+    // Tests in this module need following portlets. register them.
     // These variables provide linkage between the "describe" sections
     hubA,
     hubB,

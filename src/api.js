@@ -88,7 +88,22 @@ class PortletInit {
 	}
 
 	removeEventListener(handle) {
-		delete clientEventListeners[handle];
+		assertType('handle', handle, 'string');
+		if (arguments.length > 1) {
+			throw new TypeError('too many arguments passed.');
+		}
+		else if (clientEventListeners.hasOwnProperty(handle)) {
+			delete clientEventListeners[handle];
+		}
+		else if (errorListeners.hasOwnProperty(handle)) {
+			delete errorListeners[handle];
+		}
+		else if (stateChangeListeners.hasOwnProperty(handle)) {
+			delete stateChangeListeners[handle];
+		}
+		else {
+			throw new TypeError('invalid event handle.');
+		}
 	}
 
 	action(...args) {
@@ -108,7 +123,7 @@ class PortletInit {
 			el = args[0];
 		}
 		else if (args.length > 2) {
-			throw new TypeError('too many paremeters passed.');
+			throw new TypeError('too many arguments passed.');
 		}
 		if (!isElement(el)) {
 			throw new TypeError('element should be a HTML node.');
@@ -155,12 +170,16 @@ class PortletInit {
 			stateListenersQueue.push(stateChangeListeners[key]);
 		});
 
+		const state = this.getRenderState();
+		const data = this.getRenderData();
+
+		if (!state) {
+			return;
+		}
+
 		while (stateListenersQueue.length > 0) {
 			// async.nextTick(() => {
 				const listener = stateListenersQueue.shift();
-
-				const state = this.getRenderState();
-				const data = this.getRenderData();
 				const callback = listener.callback;
 
 				if (data && data.content) {

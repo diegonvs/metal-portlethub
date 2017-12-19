@@ -31,10 +31,8 @@ describe('The portlet hub provides the ability to add and remove event listeners
   // All tests need a registered portlet client. For the mockup, assume portlet ID portletA
   // is present. Get the hub functions for the portlet.
   // These variables provide linkage between the "describe" sections
-  let hubA,
-    hubB,
-    userEventName = 'someEvent',
-    userEventHandle;
+  
+  const userEventName = 'someEvent';
 
   describe('The portlet hub addEventListener function: ', function() {
     it('is present in the register return object and is a function', function() {

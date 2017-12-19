@@ -128,139 +128,99 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     });
 
     it('does not throw if both arguments are valid', function() {
-      let parms = {rp1: ['resVal']};
-      let testFunc = function() {
-        hubA.createResourceUrl(parms, 'cacheLevelPage');
-      };
-      expect(testFunc).not.toThrow();
-    });
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl).register(portletA).then(hub => {
+        expect(() => {
+          const parms = {rp1: ['resVal']};
+          hub.createResourceUrl(parms, 'cacheLevelPage');
+        }).resolves.not.toThrow();
+      });
+    }); //TODO
 
     it('returns a string if both arguments are valid', function() {
-      let parms = {rp1: ['resVal']},
-        retval;
-      let testFunc = function() {
-        return hubA.createResourceUrl(parms, 'cacheLevelFull');
-      };
-      let ph = new MockData.jasmine.PromiseHandler(testFunc, false);
-      runs(ph.getRun());
-      waitsFor(
-        ph.getIsComplete(),
-        'The promise from createResourceUrl is settled.',
-        1000
-      );
-      runs(ph.getChecker());
-      runs(function() {
-        expect(typeof ph.result).toEqual('string');
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl).register(portletA).then(hub => {
+        expect(() => {
+          const parms = {rp1: ['resVal']};
+          hub.createResourceUrl(parms, 'cacheLevelFull');
+        }).resolves.toBe('');
       });
     });
 
     it('Throws an exception if cacheability is specified first', function() {
-      let parms = {rp1: ['resVal']},
-        retval;
-      let testFunc = function() {
-        return hubA.createResourceUrl('cacheLevelPage', parms);
-      };
-      expect(testFunc).toThrowCustomException('TypeError');
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl).register(portletA).then(hub => {
+        expect(() => {
+          const parms = {rp1: ['resVal']};
+          hub.createResourceUrl('cacheLevelPage', parms);
+        }).toThrow(TypeError);
+      });
     });
 
     it('returns a string if only cacheability present', function() {
-      let parms = {rp1: ['resVal']},
-        retval;
-      let testFunc = function() {
-        return hubA.createResourceUrl(null, 'cacheLevelPortlet');
-      };
-      let ph = new MockData.jasmine.PromiseHandler(testFunc, false);
-      runs(ph.getRun());
-      waitsFor(
-        ph.getIsComplete(),
-        'The promise from createResourceUrl is settled.',
-        1000
-      );
-      runs(ph.getChecker());
-      runs(function() {
-        expect(typeof ph.result).toEqual('string');
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl).register(portletA).then(hub => {
+        expect(() => {
+          hub.createResourceUrl(null, 'cacheLevelPortlet');
+        }).resolves.toBeTruthy(typeof 'string');
       });
     });
 
     it('returns a string if only resource parameters present', function() {
-      let parms = {rp1: ['resVal'], rp2: ['resVal2']},
-        retval;
-      let testFunc = function() {
-        return hubA.createResourceUrl(parms);
-      };
-      let ph = new MockData.jasmine.PromiseHandler(testFunc, false);
-      runs(ph.getRun());
-      waitsFor(
-        ph.getIsComplete(),
-        'The promise from createResourceUrl is settled.',
-        1000
-      );
-      runs(ph.getChecker());
-      runs(function() {
-        expect(typeof ph.result).toEqual('string');
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl).register(portletA).then(hub => {
+        expect(() => {
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']}
+          hub.createResourceUrl(parms);
+        }).resolves.toBe(typeof 'string');
       });
     });
 
     it('returns a string if no parameters present', function() {
-      let parms = {rp1: ['resVal'], rp2: ['resVal2']},
-        retval;
-      let testFunc = function() {
-        return hubA.createResourceUrl();
-      };
-      let ph = new MockData.jasmine.PromiseHandler(testFunc, false);
-      runs(ph.getRun());
-      waitsFor(
-        ph.getIsComplete(),
-        'The promise from createResourceUrl is settled.',
-        1000
-      );
-      runs(ph.getChecker());
-      runs(function() {
-        expect(typeof ph.result).toEqual('string');
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl).register(portletA).then(hub => {
+        expect(() => {
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']}
+          hub.createResourceUrl(params);
+        }).resolves.toBe(typeof 'string');
       });
     });
 
     it('returns a URL indicating the initiating portlet A', function() {
-      let parms = {rp1: ['resVal'], rp2: ['resVal2']},
-        url,
-        id;
-      let testFunc = function() {
-        return hubA.createResourceUrl(parms, 'cacheLevelPage');
-      };
-      let ph = new MockData.jasmine.PromiseHandler(testFunc, false);
-      runs(ph.getRun());
-      waitsFor(
-        ph.getIsComplete(),
-        'The promise from createResourceUrl is settled.',
-        1000
-      );
-      runs(ph.getChecker());
-      runs(function() {
-        id = MockData.test.resource.getInitiatingPortletId(ph.result);
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl).register(portletA).then(hub => {
+        expect(() => {
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']}
+          hub.createResourceUrl(parms, 'cacheLevelPage');
+        });
+        //Implementar!
+        console.log(hub);
+        const id = MockData.test.resource.getInitialingPortletId(hub);
+        //expect(id).toEqual(portletA);
+      });
+    });
+      // como eu obtenho o resultado dessa promise para pegar o id do portlet?
+      // runs(function() {
+      //   id = MockData.test.resource.getInitiatingPortletId(ph.result);
+      //   expect(id).toEqual(portletA);
+      // });
+
+    it('returns a URL indicating a different initiating portlet B', function() {
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl).register(portletA).then(hub => {
+        expect(() => {
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']}
+          hub.createResourceUrl(parms, ' cacheLevelPage');
+        }).resolves.toBe(typeof 'string');
+        let id = MockData.test.resource.getInitiatingPortletId();
         expect(id).toEqual(portletA);
       });
     });
 
-    it('returns a URL indicating a different initiating portlet B', function() {
-      let parms = {rp1: ['resVal'], rp2: ['resVal2']},
-        url,
-        id;
-      let testFunc = function() {
-        return hubB.createResourceUrl(parms, 'cacheLevelPage');
-      };
-      let ph = new MockData.jasmine.PromiseHandler(testFunc, false);
-      runs(ph.getRun());
-      waitsFor(
-        ph.getIsComplete(),
-        'The promise from createResourceUrl is settled.',
-        1000
-      );
-      runs(ph.getChecker());
-      runs(function() {
-        id = MockData.test.resource.getInitiatingPortletId(ph.result);
-        expect(id).toEqual(portletB);
-      });
-    });
+    //     id = MockData.test.resource.getInitiatingPortletId(ph.result);
+    //     expect(id).toEqual(portletB);
+    //   });
+    // });
 
     it('returns a resource URL', function() {
       let parms = {rp1: ['resVal'], rp2: ['resVal2']},

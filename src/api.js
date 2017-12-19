@@ -129,13 +129,13 @@ class PortletInit {
 			throw new TypeError('element should be a HTML node.');
 		}
 		if (!params) {
-			throw new TypeError('params should be an object.');	
+			throw new TypeError('params should be an object.');
 		}
 		if (params === el) {
 			throw new TypeError('element and element should not be equal.');
 		}
 		if (Object.keys(params).find(key => !Array.isArray(params[key]))) {
-			throw new TypeError('parameter values should be an array.');	
+			throw new TypeError('parameter values should be an array.');
 		}
 		if (busy) {
 			throw new AccessDeniedException('Operation in progress');
@@ -151,10 +151,30 @@ class PortletInit {
 			});
 	}
 
-	createResourceUrl(parameters, cache, resid) {}
+	createResourceUrl(parameters, cache, resid) {
+		if (arguments.length > 3){
+			throw new TypeError('Too many arguments are provided');
+		}
+		if (!(typeof parameters == 'string')){
+			throw new TypeError('Invalid parameters type, must be a string');
+		}
+		if (!(typeof cache == 'string')){
+			throw new TypeError('Invalid parameters type, must be a string');
+		}
+		if (arguments.match(/cache/g).length > 2){
+			throw new TypeError('You cannot pass 2 cacheability arguments');
+		}
+		if (parameters == null) {
+			return '';
+		}
+		//pode receber mais de um parameters?
+
+
+		return '';//return anything
+	}
 
 	dispatchClientEvent(eventType, payload) {
-		
+
 	}
 
 	updateStateForPortlet_(portletId) {
@@ -162,7 +182,7 @@ class PortletInit {
 		const portletStateListeners = stateChangeListenerKeys.filter((key) => {
 			const listener = stateChangeListeners[key];
 			return (
-				listener.id === portletId && 
+				listener.id === portletId &&
 				stateListenersQueue.indexOf(listener) === -1
 			);
 		}).forEach(key => {

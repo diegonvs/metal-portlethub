@@ -135,7 +135,7 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
           hub.createResourceUrl(parms, 'cacheLevelPage');
         }).resolves.not.toThrow();
       });
-    }); //TODO
+    }); // TODO
 
     it('returns a string if both arguments are valid', function() {
       const impl = new DummyActionPortlet();
@@ -170,7 +170,7 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
       const impl = new DummyActionPortlet();
       return new Portlet(impl).register(portletA).then(hub => {
         expect(() => {
-          const parms = {rp1: ['resVal'], rp2: ['resVal2']}
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']};
           hub.createResourceUrl(parms);
         }).resolves.toBe(typeof 'string');
       });
@@ -180,7 +180,7 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
       const impl = new DummyActionPortlet();
       return new Portlet(impl).register(portletA).then(hub => {
         expect(() => {
-          const parms = {rp1: ['resVal'], rp2: ['resVal2']}
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']};
           hub.createResourceUrl(params);
         }).resolves.toBe(typeof 'string');
       });
@@ -190,26 +190,26 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
       const impl = new DummyActionPortlet();
       return new Portlet(impl).register(portletA).then(hub => {
         expect(() => {
-          const parms = {rp1: ['resVal'], rp2: ['resVal2']}
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']};
           hub.createResourceUrl(parms, 'cacheLevelPage');
         });
-        //Implementar!
+        // Implementar!
         console.log(hub);
         const id = MockData.test.resource.getInitialingPortletId(hub);
-        //expect(id).toEqual(portletA);
+        // expect(id).toEqual(portletA);
       });
     });
-      // como eu obtenho o resultado dessa promise para pegar o id do portlet?
-      // runs(function() {
-      //   id = MockData.test.resource.getInitiatingPortletId(ph.result);
-      //   expect(id).toEqual(portletA);
-      // });
+    // como eu obtenho o resultado dessa promise para pegar o id do portlet?
+    // runs(function() {
+    //   id = MockData.test.resource.getInitiatingPortletId(ph.result);
+    //   expect(id).toEqual(portletA);
+    // });
 
     it('returns a URL indicating a different initiating portlet B', function() {
       const impl = new DummyActionPortlet();
       return new Portlet(impl).register(portletA).then(hub => {
         expect(() => {
-          const parms = {rp1: ['resVal'], rp2: ['resVal2']}
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']};
           hub.createResourceUrl(parms, ' cacheLevelPage');
         }).resolves.toBe(typeof 'string');
         let id = MockData.test.resource.getInitiatingPortletId();

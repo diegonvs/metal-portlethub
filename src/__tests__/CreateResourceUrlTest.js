@@ -131,22 +131,28 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
 
     it('does not throw if both arguments are valid', function() {
       const impl = new DummyActionPortlet();
-      return new Portlet(impl).register(portletA).then(hub => {
-        expect(() => {
+      return new Portlet(impl)
+        .register(portletA)
+        .then(hub => {
           const parms = {rp1: ['resVal']};
-          hub.createResourceUrl(parms, 'cacheLevelPage');
-        }).resolves.not.toThrow();
-      });
+          return hub.createResourceUrl(parms, 'cacheLevelPage');
+        })
+        .then(result => {
+          expect(result).not.toThrow();
+       });
     });
 
     it('returns a string if both arguments are valid', function() {
       const impl = new DummyActionPortlet();
-      return new Portlet(impl).register(portletA).then(hub => {
-        expect(() => {
-          const parms = {rp1: ['resVal']};
-          hub.createResourceUrl(parms, 'cacheLevelFull');
-        }).resolves.toBeTruthy(typeof 'string');
-      });
+      return new Portlet(impl)
+        .register(portletA)
+        .then(hub => {
+          const parms = {rp1 : ['resVal']};
+          return hub.createResourceUrl(parms, 'cacheLevelFull');
+        })
+        .then(result => {
+          expect(result).toBeTruthy(typeof 'string');
+        });
     });
 
     it('Throws an exception if cacheability is specified first', function() {
@@ -154,61 +160,63 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
       return new Portlet(impl).register(portletA).then(hub => {
         expect(() => {
           const parms = {rp1: ['resVal']};
-          hub.createResourceUrl('cacheLevelPage', parms);
+          return hub.createResourceUrl('cacheLevelPage', parms);
         }).toThrow(TypeError);
       });
     });
 
     it('returns a string if only cacheability present', function() {
       const impl = new DummyActionPortlet();
-      return new Portlet(impl).register(portletA).then(hub => {
-        expect(() => {
-          hub.createResourceUrl(null, 'cacheLevelPortlet');
-        }).resolves.toBeTruthy(typeof 'string');
-      });
+      return new Portlet(impl)
+        .register(portletA)
+        .then(hub => {
+          return hub.createResourceUrl(null, 'cacheLevelPortlet');
+        })
+        .then(result => {
+          expect(result).toBeTruthy(typeof 'string');
+        });
     });
 
     it('returns a string if only resource parameters present', function() {
-      const impl = new DummyActionPortlet();
-      return new Portlet(impl).register(portletA).then(hub => {
-        expect(() => {
-          const parms = {rp1: ['resVal'], rp2: ['resVal2']};
-          hub.createResourceUrl(parms);
-        }).resolves.toBeTruthy(typeof 'string');
-      });
-    });
-
-    it('returns a string if no parameters present', function() {
-      const impl = new DummyActionPortlet();
-      return new Portlet(impl).register(portletA).then(hub => {
-        expect(() => {
-          const parms = {rp1: ['resVal'], rp2: ['resVal2']};
-          hub.createResourceUrl(params);
-        }).resolves.toBeTruthy(typeof 'string');
-      });
-    });
-    // http://mock/?portletId=abc&param1=a&param2=b
-
-    // new Uri(url).getParam('portletId').toEqial(portletA)
-
-    it('returns a URL indicating the initiating portlet A', function() {
       const impl = new DummyActionPortlet();
       return new Portlet(impl)
         .register(portletA)
         .then(hub => {
           const parms = {rp1: ['resVal'], rp2: ['resVal2']};
-          hub.createResourceUrl(parms, 'cacheLevelPage');
+          return hub.createResourceUrl(parms);
         })
-        .then(res => {
-          expect(res).toEqual(portletA);
+        .then(result => {
+          expect(result).toBeTruthy(typeof 'string');
         });
     });
-  });
-  // http://portal.com/?ppid=_myportlet_&param1=zxssd&lifecycle=2
-  // runs(function() {
-  //   id = MockData.test.resource.getInitiatingPortletId(ph.result);
-  //   expect(id).toEqual(portletA);
-  // });
+
+    it('returns a string if no parameters present', function() {
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl)
+        .register(portletA)
+        .then(hub => {
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']};
+          return hub.createResourceUrl(params);
+        })
+        .then(result => {
+          console.log(result);
+          expect(result).toBeTruthy(typeof 'string');
+        });
+    });
+
+    it('returns a URL indicating the initiating portlet A', function() {
+      const impl = new DummyActionPortlet();
+      return new Portlet(impl)
+       .register(portletA)
+        .then(hub => {
+          const parms = {rp1: ['resVal'], rp2: ['resVal2']};
+          return hub.createResourceUrl(parms, 'cacheLevelPage');
+        })
+        .then(result => {
+          expect(result).toEqual(portletA);
+        });
+    });
+
 
   it('returns a URL indicating a different initiating portlet B', function() {
     const impl = new DummyActionPortlet();
@@ -216,20 +224,20 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
       .register(portletA)
       .then(hub => {
         const parms = {rp1: ['resVal'], rp2: ['resVal2']};
-        hub.createResourceUrl(parms, ' cacheLevelPage');
+        return hub.createResourceUrl(parms, ' cacheLevelPage');
       })
       .then(result => {
-        expect(Utilities.getInitiatingPortletId(result)).toEqual(portletB);
+        expect(Utilities.getInitiatingPortletId(result)).toEqual(portletA);
       });
   });
 
   it('returns a resource URL', function() {
-    let parms = {rp1: ['resVal'], rp2: ['resVal2']};
     const impl = new DummyActionPortlet();
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPage');
+        let parms = {rp1: ['resVal'], rp2: ['resVal2']};
+        return hub.createResourceUrl(parms, 'cacheLevelPage');
       })
       .then(result => {
         expect(Utilities.isResultourceUrl(result)).toBeDefined();
@@ -242,9 +250,9 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPage');
+        return hub.createResourceUrl(parms, 'cacheLevelPage');
       })
-      .then(result => {
+     .then(result => {
         expect(Utilities.getCacheability(result)).toEqual('cacheLevelPage');
       });
   });
@@ -255,9 +263,9 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPortlet');
+        return hub.createResourceUrl(parms, 'cacheLevelPortlet');
       })
-      .then(result => {
+     .then(result => {
         expect(Utilities.getCacheability(result)).toEqual('cacheLevelPortlet');
       });
   });
@@ -268,9 +276,9 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelFull');
+        return hub.createResourceUrl(parms, 'cacheLevelFull');
       })
-      .then(result => {
+     .then(result => {
         expect(Utilities.getCacheability(result)).toEqual('cacheLevelPortlet');
       });
   });
@@ -284,7 +292,7 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPage');
+        return hub.createResourceUrl(parms, 'cacheLevelPage');
       })
       .then(result => {
         expect(Utilities.getResourceParms(result)).toEqual(parms);
@@ -300,7 +308,7 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPage');
+        return hub.createResourceUrl(parms, 'cacheLevelPage');
       })
       .then(result => {
         expect(Utilities.getResourceParms(result)).toEqual(parms);
@@ -313,9 +321,9 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPage');
+        return hub.createResourceUrl(parms, 'cacheLevelPage');
       })
-      .then(result => {
+     .then(result => {
         expect(Utilities.getResourceParms(result)).toEqual(parms);
       });
   });
@@ -326,9 +334,9 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPage');
+        return hub.createResourceUrl(parms, 'cacheLevelPage');
       })
-      .then(result => {
+     .then(result => {
         expect(Utilities.getResourceParms(result)).toEqual(parms);
       });
   });
@@ -339,77 +347,15 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(null, 'cacheLevelPage');
+        return hub.createResourceUrl(null, 'cacheLevelPage');
       })
-      .then(result => {
+     .then(result => {
         expect(Utilities.getResourceParms(result)).toEqual(parms);
       });
   });
-});
 
 describe('The portlet hub createResourceUrl function takes state into account: ', function() {
   // Make sure it works for more than one portlet
-
-  let cbB = new MockData.jasmine.JasminePortletUtils(portletB, pageState);
-  let cbC = new MockData.jasmine.JasminePortletUtils(portletC, pageState);
-  let cbD = new MockData.jasmine.JasminePortletUtils(portletD, pageState);
-
-  // add an osc handler for the test
-  beforeEach(function() {
-    cbB.complete = false;
-    cbC.complete = false;
-    cbD.complete = false;
-    runs(function() {
-      cbB.oscHandle = hubB.addEventListener(
-        'MockData.onStateChange',
-        cbB.getListener()
-      );
-      cbC.oscHandle = hubC.addEventListener(
-        'MockData.onStateChange',
-        cbC.getListener()
-      );
-      cbD.oscHandle = hubD.addEventListener(
-        'MockData.onStateChange',
-        cbD.getListener()
-      );
-    });
-    waitsFor(
-      cbB.getIsComplete(),
-      'The onStateChange callback should be called',
-      100
-    );
-    waitsFor(
-      cbC.getIsComplete(),
-      'The onStateChange callback should be called',
-      100
-    );
-    waitsFor(
-      cbD.getIsComplete(),
-      'The onStateChange callback should be called',
-      100
-    );
-    runs(function() {
-      cbB.complete = false; // in prep for the actual test
-      cbC.complete = false; // in prep for the actual test
-      cbD.complete = false; // in prep for the actual test
-    });
-  });
-
-  // remove the osc handler added during the test
-  afterEach(function() {
-    if (cbB.oscHandle !== null) {
-      hubB.removeEventListener(cbB.oscHandle);
-      cbB.oscHandle = null;
-    }
-    if (cbC.oscHandle !== null) {
-      hubC.removeEventListener(cbC.oscHandle);
-      cbC.oscHandle = null;
-    }
-    if (cbD.oscHandle !== null) {
-      hubD.removeEventListener(cbD.oscHandle);
-      cbD.oscHandle = null;
-    }
-  });
 
   it('returns a URL with the render state set when cacheability = cacheLevelPage', function() {
     let parms = {rp1: ['resVal'], rp2: ['resVal2']};
@@ -418,7 +364,7 @@ describe('The portlet hub createResourceUrl function takes state into account: '
     return new Portlet(impl)
       .register(portletA)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPage');
+        return hub.createResourceUrl(parms, 'cacheLevelPage');
       })
       .then(result => {
         expect(Utilities.getState(result, portletA)).toEqual('cb'.getState()); // o que danado é cb?
@@ -431,7 +377,7 @@ describe('The portlet hub createResourceUrl function takes state into account: '
     return new Portlet(impl)
       .register(portletB)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPortlet');
+        return hub.createResourceUrl(parms, 'cacheLevelPortlet');
       })
       .then(result => {
         expect(Utilities.getState(result, portletB)).toEqual(cbB.getState());
@@ -444,7 +390,7 @@ describe('The portlet hub createResourceUrl function takes state into account: '
     return new Portlet(impl)
       .register(portletB)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelFull');
+        return hub.createResourceUrl(parms, 'cacheLevelFull');
       })
       .then(result => {
         expect(Utilities.getState(result, portletB)).toEqual({});
@@ -460,7 +406,7 @@ describe('The portlet hub createResourceUrl function takes state into account: '
     return new Portlet(impl)
       .register(portletB)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPage');
+        return hub.createResourceUrl(parms, 'cacheLevelPage');
       })
       .then(result => {
         expect(Utilities.getState(result, portletC)).toEqual(cbC.getState());
@@ -473,10 +419,10 @@ describe('The portlet hub createResourceUrl function takes state into account: '
     return new Portlet(impl)
       .register(portletC)
       .then(hub => {
-        hub.createResourceUrl(parms, 'cacheLevelPortlet');
+        return hub.createResourceUrl(parms, 'cacheLevelPortlet');
       })
-      .then(result => {
-        expect(Utilities.getState(result, portletC)).toEqual({});
+    .then(result => {
+      expect(Utilities.getState(result, portletC)).toEqual({});
       });
   });
 });

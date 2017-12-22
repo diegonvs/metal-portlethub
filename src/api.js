@@ -152,25 +152,27 @@ class PortletInit {
 	}
 
 	createResourceUrl(parameters, cache, resid) {
-		if (arguments.length > 3){
-			throw new TypeError('Too many arguments are provided');
+		if (arguments.length > 3) {
+			throw new TypeError(
+				"Too many arguments. 3 arguments are allowed.");
 		}
-		if (!(typeof parameters == 'string')){
-			throw new TypeError('Invalid parameters type, must be a string');
+		let occurs = 0;
+		for (var key in arguments) {
+			if (key.match(/cache/g)){
+				occurs++;
+			}
 		}
-		if (!(typeof cache == 'string')){
-			throw new TypeError('Invalid parameters type, must be a string');
-		}
-		if (arguments.match(/cache/g).length > 2){
+		if (occurs > 2){
 			throw new TypeError('You cannot pass 2 cacheability arguments');
 		}
 		if (parameters == null) {
 			return '';
 		}
-		//pode receber mais de um parameters?
+		if (arguments[0].match(/cache/g)){
+			throw new TypeError('You cannot specify cacheability first');
+		}
 
-
-		return '';//return anything
+		return this._impl.createResourceUrl();
 	}
 
 	dispatchClientEvent(eventType, payload) {

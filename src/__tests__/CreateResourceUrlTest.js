@@ -469,68 +469,6 @@ describe('The portlet hub allows the portlet client to create a resource URL.', 
   });
 
   describe('The portlet hub createResourceUrl function takes state into account: ', function() {
-    // Make sure it works for more than one portlet
-
-    let cbB = new MockData.jasmine.JasminePortletUtils(portletB, pageState);
-    let cbC = new MockData.jasmine.JasminePortletUtils(portletC, pageState);
-    let cbD = new MockData.jasmine.JasminePortletUtils(portletD, pageState);
-
-    // add an osc handler for the test
-    beforeEach(function() {
-      cbB.complete = false;
-      cbC.complete = false;
-      cbD.complete = false;
-      runs(function() {
-        cbB.oscHandle = hubB.addEventListener(
-          'MockData.onStateChange',
-          cbB.getListener()
-        );
-        cbC.oscHandle = hubC.addEventListener(
-          'MockData.onStateChange',
-          cbC.getListener()
-        );
-        cbD.oscHandle = hubD.addEventListener(
-          'MockData.onStateChange',
-          cbD.getListener()
-        );
-      });
-      waitsFor(
-        cbB.getIsComplete(),
-        'The onStateChange callback should be called',
-        100
-      );
-      waitsFor(
-        cbC.getIsComplete(),
-        'The onStateChange callback should be called',
-        100
-      );
-      waitsFor(
-        cbD.getIsComplete(),
-        'The onStateChange callback should be called',
-        100
-      );
-      runs(function() {
-        cbB.complete = false; // in prep for the actual test
-        cbC.complete = false; // in prep for the actual test
-        cbD.complete = false; // in prep for the actual test
-      });
-    });
-
-    // remove the osc handler added during the test
-    afterEach(function() {
-      if (cbB.oscHandle !== null) {
-        hubB.removeEventListener(cbB.oscHandle);
-        cbB.oscHandle = null;
-      }
-      if (cbC.oscHandle !== null) {
-        hubC.removeEventListener(cbC.oscHandle);
-        cbC.oscHandle = null;
-      }
-      if (cbD.oscHandle !== null) {
-        hubD.removeEventListener(cbD.oscHandle);
-        cbD.oscHandle = null;
-      }
-    });
 
     it('returns a URL with the render state set when cacheability = cacheLevelPage', function() {
       let parms = {rp1: ['resVal'], rp2: ['resVal2']},

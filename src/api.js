@@ -129,13 +129,13 @@ class PortletInit {
 			throw new TypeError('element should be a HTML node.');
 		}
 		if (!params) {
-			throw new TypeError('params should be an object.');	
+			throw new TypeError('params should be an object.');
 		}
 		if (params === el) {
 			throw new TypeError('element and element should not be equal.');
 		}
 		if (Object.keys(params).find(key => !Array.isArray(params[key]))) {
-			throw new TypeError('parameter values should be an array.');	
+			throw new TypeError('parameter values should be an array.');
 		}
 		if (busy) {
 			throw new AccessDeniedException('Operation in progress');
@@ -151,10 +151,56 @@ class PortletInit {
 			});
 	}
 
-	createResourceUrl(parameters, cache, resid) {}
+	createResourceUrl (parameters, cache, resid) {
+		if (arguments.length > 3) {
+			throw new TypeError(
+				"Too many arguments. 3 arguments are allowed.");
+		}
+
+		if (typeof arguments[0] == 'string'){
+			throw new TypeError('Cacheability cannot be specified first')
+		}
+
+		if (parameters) {
+			if (!(typeof parameters === 'object')){
+				throw new TypeError(
+					"Invalid argument type. Resource parameters must be a parameters object.");
+			}
+
+			if ((parameters === null) || (parameters === undefined)) {
+				throw new TypeError("The parameters object is " + (typeof parameters));
+			}
+		}
+
+		if (cache) {
+			if (typeof cache === 'string') {
+				switch (cache) {
+					case "cacheLevelPage":
+					case "cacheLevelPortlet":
+					case "cacheLevelFull":
+						break;
+					default:
+						throw new TypeError(
+							"Invalid cacheability argument: " +
+							cache);
+				}
+			} else {
+				throw new TypeError(
+					"Invalid argument type. Cacheability argument must be a string.");
+			}
+		}
+		if (resid){
+			if (!(typeof resid === 'string')) {
+				throw new TypeError(
+					"Invalid argument type. Resource ID argument must be a string.");
+			}
+		}
+
+		return this._impl.createResourceUrl();
+	}
 
 	dispatchClientEvent(eventType, payload) {
-		
+
 	}
 
 	updateStateForPortlet_(portletId) {
@@ -162,7 +208,7 @@ class PortletInit {
 		const portletStateListeners = stateChangeListenerKeys.filter((key) => {
 			const listener = stateChangeListeners[key];
 			return (
-				listener.id === portletId && 
+				listener.id === portletId &&
 				stateListenersQueue.indexOf(listener) === -1
 			);
 		}).forEach(key => {

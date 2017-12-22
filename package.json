@@ -21,7 +21,8 @@
     "format": "prettier-eslint --write src/**/*.js src/*/*.js",
     "lint": "eslint src/**/*.js",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watchAll"
   },
   "keywords": [
     "jsr382",

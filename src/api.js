@@ -151,7 +151,9 @@ class PortletInit {
 			});
 	}
 
-	createResourceUrl (parameters, cache, resid) {
+	createResourceUrl (parameters, cache, pid, resid){
+		//currently passing portletId as @param in createResourceUrl
+		//TODO - Review portletId arch
 		if (arguments.length > 3) {
 			throw new TypeError(
 				"Too many arguments. 3 arguments are allowed.");
@@ -189,6 +191,7 @@ class PortletInit {
 					"Invalid argument type. Cacheability argument must be a string.");
 			}
 		}
+
 		if (resid){
 			if (!(typeof resid === 'string')) {
 				throw new TypeError(
@@ -196,7 +199,7 @@ class PortletInit {
 			}
 		}
 
-		return this._impl.createResourceUrl();
+		return this._impl.createResourceUrl(parameters, cache, pid, resid);
 	}
 
 	dispatchClientEvent(eventType, payload) {

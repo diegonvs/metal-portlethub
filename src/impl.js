@@ -1,12 +1,26 @@
 import { assertType } from './util';
 
 class PortletImpl {
-	constructor(portletId) {
-		
-	}
+	constructor(portletId){
+
+	};
 
 	createUrl() {
 		throw new TypeError('Method createUrl not implemented');
+	}
+
+	createResourceUrl (parameters, cache, pid, resid) {
+
+		let cacheability = null;
+
+		if (!cache) {
+			cacheability = 'cacheLevelPage';
+		}
+
+		cacheability = cache;
+
+		return this.getUrl("RESOURCE", pid, parameters, cacheability, resid);
+
 	}
 
 	executeAction() {

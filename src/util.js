@@ -1,5 +1,7 @@
 import {PortletParameters} from './data';
 
+import Uri from 'metal-uri';
+
 export function assertType(name, actual, expected) {
 	if (!Array.isArray(expected)) {
 		expected = [expected];
@@ -30,7 +32,30 @@ export function assertType(name, actual, expected) {
 		}
 	}
 
-	throw new TypeError(
-		`Invalid type for argument '${name}': ${typeof actual}`,
-	);
+throw new TypeError(
+	`Invalid type for argument '${name}': ${typeof actual}`,
+);
+}
+
+export function getInitiatingPortletId(uri) {
+	let url = new Uri(uri);
+
+	return (url.getPathname()).replace('/', '');
+
+}
+
+export function isResourceUrl(uri) {
+	let url = new Uri(uri);
+
+	if (url.getParameterValue('type') == 'RESOURCE') {
+		return true;
+	}
+
+	return false;
+}
+
+export function getCacheability(uri) {
+	let url = new Uri(uri);
+
+	return url.getParameterValue('cache');
 }
